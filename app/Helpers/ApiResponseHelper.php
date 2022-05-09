@@ -65,10 +65,17 @@ trait ApiResponseHelper
      * @return \Illuminate\Http\JsonResponse
      */
     public function restSuccess($data, $message = "success"){
-        if(is_object($data))
-            return $this->responsed('10000', $message, $data->toArray());
-        if(is_array($data))
-        return $this->responsed('10000', $message, $data);
+        $res['data'] = [];
+        if(is_object($data)){
+            $res['data'] = $data->toArray();
+            return $this->responsed('10000', $message, $res);
+        }
+
+        if(is_array($data)){
+            $res['data'] = $data;
+            return $this->responsed('10000', $message, $res);
+        }
+        return $this->responsed('10000', $message, $res);
         //$this->setHttpCode(FoundationResponse::HTTP_OK);
 
     }

@@ -1,11 +1,10 @@
 <?php
 namespace app\Http\Controllers\Patient;
 use App\Http\Controllers\Controller;
-use app\Models\PatientCase;
+use App\Models\PatientCase;
 use app\Models\Files;
-use app\Models\Ziduan;
+use App\Models\Ziduan;
 use Illuminate\Http\Request;
-use Illuminate\Database\Capsule\Manager  as DB;
 use Symfony\Component\Filesystem\Filesystem;
 
 class IndexController extends Controller
@@ -30,9 +29,9 @@ class IndexController extends Controller
      * @apiParam {str} [created_at] 创建时间
      *
      */
-    public function index()
+    public function index(Request $request)
     {
-        $form = $this->validator([
+        $form = $request->validate([
             "name" => "string",
             "created_at" => "string",
         ]);
@@ -158,30 +157,30 @@ class IndexController extends Controller
         if(isset($form['s'])){
             unset($form['s']);
         }
-        if(!$form['zhuyh']) $this->responseSend([],400,"zhuyh不能为空");
+        if(!$form['zhuyh']) $this->internalError("zhuyh不能为空");
         $res = PatientCase::where("zhuyh",$form["zhuyh"])->update($form);
-        $this->responseSend($res);
+        return $this->restSuccess($res);
     }
 
     /**解决录像不正常结束后的文件显示问题 */
     public function file_edit(){
         $form = Request::capture()->all();
-        if(!$form['id']) $this->responseSend([],400,"id参数不能为空");
+        if(!$form['id']) $this->internalError("id参数不能为空");
         if(isset($form['record_files'])){
             $res = PatientCase::where('id',$form['id'])->update(['record_files'=>$form['record_files'],'record_status'=>$form['record_status']]);
         }else{
             $res = PatientCase::where('id',$form['id'])->update(['record_status'=>$form['record_status']]);
         }
         
-        $this->responseSend($res);
+        return $this->restSuccess($res);
     }
 /**解决录像不正常结束后的文件显示问题 */
     public function file_edit_stop(){
         $form = Request::capture()->all();
-        if(!$form['id']) $this->responseSend([],400,"id参数不能为空");
+        if(!$form['id']) $this->internalError("id参数不能为空");
             $res = PatientCase::where('id',$form['id'])->update(['record_status'=>$form['record_status']]);
         
-        $this->responseSend($res);
+        return $this->restSuccess($res);
     }
     
     /**
@@ -197,7 +196,7 @@ class IndexController extends Controller
     public function delete(){
         error_log("in to delete \n",   3,   "/link/web/core309_local/errors.log");
         $form = Request::capture()->all();
-        if(!$form['id']) $this->responseSend([],400,"id参数不能为空");
+        if(!$form['id']) $this->internalError("id参数不能为空");
         $field = "type";
         if($form["type"] == 1) {
             $ids = [2];
@@ -226,7 +225,7 @@ class IndexController extends Controller
             error_log($ppp.":in to ppp \n",   3,   "/link/web/core309_local/errors.log");
             $fs->remove($ppp);
         }
-        $this->responseSend();
+        return $this->restSuccess();
     }
 
     /**
@@ -243,7 +242,8 @@ class IndexController extends Controller
         //         group by dateTime ORDER by dateTime DESC ";
         $sql = "select created_at as dateTime from bingli_info 
                 group by dateTime ORDER by dateTime DESC ";
-        $res = DB::select($sql);
+        $res = \Illuminate\Support\Facades\DB::select($sql);
+
         // $res =DB::table('bingli_info')->select(DB::raw("date_format(created_at,'%Y-%m-%d %H:%i:%s')"),"created_at")->get();
         // $this->responseSend($res);
 //        var_export($res);exit;
@@ -252,25 +252,33 @@ class IndexController extends Controller
         $date=[];
         foreach ($res as $val){
             $created_at = $val->dateTime;
+
             if(!$created_at) continue;
             $date_time = explode('-',$created_at); //0:年 1:月 2:日
             $year = $date_time[0];
             $month = $date_time[1];
             $day = substr($date_time[2],0,2);
+
             if(!isset($date[$year]))
                 $date[$year] = ['time'=>$year,'name'=>$year,'son'=>[]];
             if(!isset($date[$year]['son'][$month]))
                 $date[$year]['son'][$month] = ['time'=>$year.'-'.$month,'name'=>$month,'son'=>[]];
+
             $date[$year]['son'][$month]['son'][]= ['time'=>$year.'-'.$month.'-'.$day,'name'=>$day];
+
         }
 
+
         $date = array_values($date);
+
         $count = count($date);
         for ($i=0;$i<$count;$i++){
             $date[$i]['son'] = array_values($date[$i]['son']);
         }
 
-        $this->responseSend($date);
+
+
+        return $this->restSuccess($date);
     }
 
 }
