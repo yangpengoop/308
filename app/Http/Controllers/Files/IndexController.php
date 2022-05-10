@@ -1,13 +1,13 @@
 <?php
-namespace app\Controllers\Files;
-use app\Controllers\BaseController;
-use app\Exception\ApiException;
-use app\Models\Files;
-use app\Models\Logo;
+namespace app\Http\Controllers\Files;
+use App\Http\Controllers\Controller;
+// use app\Exception\ApiException;
+use App\Models\Files;
+// use app\Models\Logo;
 use Illuminate\Http\Request;
-use Illuminate\Database\Capsule\Manager  as DB;
+// use Illuminate\Database\Capsule\Manager  as DB;
 
-class IndexController extends BaseController
+class IndexController extends Controller
 {
     /**
      * @api {get} /files 1、病人资源列表（不包括录制中）
@@ -21,7 +21,7 @@ class IndexController extends BaseController
     public function index()
     {
         $form = Request::capture()->all();
-        if(!isset($form['patient_case_id']) || !$form['patient_case_id']) $this->responseSend([],400,"病人病历id不能为空");
+        if(!isset($form['patient_case_id']) || !$form['patient_case_id']) return $this->restSuccess([],400,"病人病历id不能为空");
         $list = Files::query()->where("patient_case_id",$form["patient_case_id"])->where('status', '<>', 0)->orderBy("id","desc")->get();
         foreach ($list as $k=>$item){
             $list[$k]['webPath'] = "/datas" . $item["path"];
@@ -33,7 +33,7 @@ class IndexController extends BaseController
             $rootPath = "/link/web/datas" . $item["path"];
             $list[$k]['size'] = file_exists($rootPath)?trim(str_replace('\n', '',shell_exec("stat -c '%s' $rootPath"))):"";
         }
-        $this->responseSend($list);
+        return $this->restSuccess($list);
     }
 
     public function Filesindex()
@@ -52,7 +52,7 @@ class IndexController extends BaseController
            // $list[$k]['size'] = file_exists($rootPath)?trim(str_replace('\n', '',shell_exec("stat -c '%s' $rootPath"))):"";
         }
         //$this->responseSend([],400,"循环了");
-        $this->responseSend($list);
+        return $this->restSuccess($list);
     }
 
     /**
@@ -94,9 +94,10 @@ class IndexController extends BaseController
      */
     public function add(){
         $form = Request::capture()->all();
+        // return $this->restSuccess($form);
         //if(!isset($form['patient_case_id']) || !$form['patient_case_id']) $this->responseSend([],400,"病人资源id不能为空");
-        if(!isset($form['type']) || !$form['type']) $this->responseSend([],400,"文件类型不能为空");
-        if(!isset($form['path']) || !$form['path'])$this->responseSend([],400,"储存路径不能为空");
+        if(!isset($form['type']) || !$form['type']) return $this->restSuccess([],400,"文件类型不能为空");
+        if(!isset($form['path']) || !$form['path'])return $this->restSuccess([],400,"储存路径不能为空");
         if(!isset($form["name"])){
             $form["name"] = substr($form["path"], strlen(dirname($form["path"])) + 1);
         }
@@ -105,10 +106,10 @@ class IndexController extends BaseController
         }
         if($form['type'] == 2){
             if(!preg_match("/\.mp4/",$form['name'])){
-                $this->responseSend([],400,"储存路径不正确，错误为path：".$form["path"]);
+                return $this->restSuccess([],400,"储存路径不正确，错误为path：".$form["path"]);
             }
         }
-        $this->responseSend(Files::create($form));
+        return $this->restSuccess(Files::create($form));
     }
 
     /**

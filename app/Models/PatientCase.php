@@ -39,5 +39,6 @@ class PatientCase extends Model
     // ];
     protected $fillable = [];
    
+    protected static $unguarded = true;
     
 }

@@ -46,9 +46,9 @@ class IndexController extends Controller
                 $res = $res->addSelect($list);
             }
 
-            // if($k==count($zd_list)-1){
-            //     $res = $res->addSelect("id");
-            // }
+            if($k==count($zd_list)-1){
+                $res = $res->addSelect("id");
+            }
             
         }
 
@@ -124,11 +124,13 @@ class IndexController extends Controller
     public function add(){
         $request = Request::capture();
         $hospital_number = $request['zhuyh'];
-        $exist = PatientCase::where('zhuyh',$hospital_number)->exists();
+        $exist = PatientCase::where('zhuyh',$hospital_number)->first();
+        // return $this->restSuccess($request->all());
         if($exist){
             return $this->internalError('该住院号已存在,请输入正确的住院号');
         }
         $data= PatientCase::create($request->all());
+        
         return $this->restSuccess($data);
     }
 

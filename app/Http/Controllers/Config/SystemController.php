@@ -1,9 +1,9 @@
 <?php
 namespace app\Http\Controllers\Config;
 
-use app\Http\Controllers\BaseController;
+// use app\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
-use app\Models\Config;
+use App\Models\Config;
 use app\Server\Ip;
 use Illuminate\Http\Request;
 use app\Server\Net;
@@ -28,7 +28,7 @@ class SystemController extends Controller
             }
         }
 
-        $this->responseSend($keyData);
+        return $this->restSuccess($keyData);
     }
 
     /**
@@ -47,7 +47,7 @@ class SystemController extends Controller
         if($keyData && $keyData['value_type'] == 'json'){
             $keyData['value'] = json_decode($keyData['value'],true);
         }
-        $this->responseSend($keyData);
+        return $this->restSuccess($keyData);
     }
 
 
@@ -67,7 +67,7 @@ class SystemController extends Controller
         $form = Request::capture()->all();
 //        var_export($form);
         if(!$form){
-            $this->responseSend([],0,'参数不能为空');
+            return $this->restSuccess([],0,'参数不能为空');
         }
 
         $form = $this->validator([
@@ -80,14 +80,14 @@ class SystemController extends Controller
 //            var_export(json_decode($form['key'],true));exit;
             $keys = $form['key'] ? json_decode($form['key'],true):'';
         }
-        if(!$keys || !is_array($keys))  $this->responseSend('',422,'key值不能为空且必须为合法的json格式');
+        if(!$keys || !is_array($keys))  return $this->restSuccess('',422,'key值不能为空且必须为合法的json格式');
         $edit_status = [];
         foreach ($keys as $key =>$value){
             $data = Config::where('key',$key)->update(['value'=>$value]);
             $edit_status[$key] = $data == 1?'success':'fail';
         }
 
-        $this->responseSend($edit_status);
+        return $this->restSuccess($edit_status);
     }
 
 

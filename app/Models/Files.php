@@ -20,8 +20,8 @@ namespace app\Models;
 use Illuminate\Database\Eloquent\Model;
 class Files extends Model
 {
-    public $table = 'files';
-    protected $fillable = ['patient_case_id','hospital_number', 'type','name','path',"status"];
+    public $table = 'bingli_file';
+    protected $fillable = ['bingli_id','zhuyh', 'type','name','path',"status"];
 
     const UPLOAD_FILE_SIZE="230m";
     const POST_MAX_SIZE="250m";

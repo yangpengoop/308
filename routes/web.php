@@ -21,7 +21,7 @@ Route::get('/', function () {
 Route::any('ziduan/add','Case_zd\ZiduanIndexController@add');
 Route::post('ziduan/update','Case_zd\ZiduanIndexController@update');
 Route::post('ziduan/showUpdateYes','Case_zd\ZiduanIndexController@showUpdateYes');
-Route::post('ziduan/showUpdateNo','ZiduanIndexController@showUpdateNo');
+Route::post('ziduan/showUpdateNo','Case_zd\ZiduanIndexController@showUpdateNo');
 Route::get('ziduan/index','Case_zd\ZiduanIndexController@index');
 
 #病人处理
@@ -35,15 +35,26 @@ Route::get('patient/time-index','Patient\IndexController@timeIndex');
 Route::post('patient/file_edit','IndexController@file_edit');
 Route::post('patient/file_edit_stop','Patient\IndexController@file_edit_stop');
 
-
+/*系统设置*/
+Route::get('system','Config\SystemController@index');
+Route::get('system/get-key','Config\SystemController@getKey');
+Route::post('system/edit','Config\SystemController@edit');
 
 #病人资源处理
-Route::get('files','app\Http\Controllers\Files\IndexController@index');
+Route::post('files/add','Files\IndexController@add');
+
+
+
+
+
+
+
+// Route::get('files','Files\IndexController@index');
 
 
 Route::get('files-logo','app\Http\Controllers\Files\IndexController@Filesindex');
 Route::get('files-web','app\Http\Controllers\Files\IndexController@indexWeb');
-Route::post('files/add','app\Http\Controllers\Files\IndexController@add');
+
 Route::post('files/edit','app\Http\Controllers\Files\IndexController@edit');
 Route::post('files/delete','app\Http\Controllers\Files\IndexController@delete');
 Route::post('files/delete-encode','app\Http\Controllers\Files\IndexController@deleteEncode');
@@ -69,9 +80,9 @@ Route::get('video','app\Http\Controllers\Config\VideoController@index');
 Route::post('video/edit','app\Http\Controllers\Config\VideoController@edit');
 
 /*系统设置*/
-Route::get('system','app\Http\Controllers\Config\SystemController@index');
-Route::get('system/get-key','app\Http\Controllers\Config\SystemController@getKey');
-Route::post('system/edit','app\Http\Controllers\Config\SystemController@edit');
+// Route::get('system','app\Http\Controllers\Config\SystemController@index');
+// Route::get('system/get-key','app\Http\Controllers\Config\SystemController@getKey');
+// Route::post('system/edit','app\Http\Controllers\Config\SystemController@edit');
 Route::post('system/network-edit','app\Http\Controllers\Config\SystemController@networkEdit');
 Route::get('/system/get-network-key','app\Http\Controllers\Config\SystemController@getNetworkKey');
 Route::get('/system/get-linux-net','app\Http\Controllers\Config\SystemController@getLinuxNet');
@@ -107,7 +118,7 @@ Route::get('system/getInfo','app\Http\Controllers\Config\SystemController@getInf
 
 
 /*文件夹处理*/
-Route::post('folder/add','app\Http\Controllers\Files\FolderController@add');
+// Route::post('folder/add','Files\FolderController@add');
 Route::get('folder/get','app\Http\Controllers\Files\FolderController@get');
 Route::post('folder/del','app\Http\Controllers\Files\FolderController@del');
 Route::post('folder/copy','app\Http\Controllers\Files\FolderController@copy');

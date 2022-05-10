@@ -47,7 +47,7 @@ class ZiduanIndexController extends Controller
         
         $data = Ziduan::create(['zd_name'=>$zd_name,'zd_cn_name'=>$zd_cn_name,'zd_type'=>$zd_type,'zd_sort'=> $zd_sort,'zd_len'=>$zd_len]);
 
-        $this->restSuccess($sd);
+        return $this->restSuccess($sd);
     }
 
     /**
@@ -80,7 +80,7 @@ class ZiduanIndexController extends Controller
         $res = Ziduan::where("id",$form["id"])->update($form);
 
         
-        $this->restSuccess($res);
+        return $this->restSuccess($res);
     }
 
     /**
@@ -106,15 +106,15 @@ class ZiduanIndexController extends Controller
             $form[$key]['zd_show'] =1;
             $res = Ziduan::where("id",$form[$key]["id"])->update($form[$key]);
         }
-        $this->restSuccess($res);
+        return $this->restSuccess($res);
 
-        $zd_name = $form['zd_name'];
+        // $zd_name = $form['zd_name'];
 
-        if(!$form['zd_name']) $this->internalError("zd_name不存在");
-        $res = Ziduan::where("id",$form["id"])->update($form);
+        // if(!$form['zd_name']) $this->internalError("zd_name不存在");
+        // $res = Ziduan::where("id",$form["id"])->update($form);
 
         
-        $this->restSuccess($res);
+        // $this->restSuccess($res);
     }
 
     /**
@@ -140,6 +140,6 @@ class ZiduanIndexController extends Controller
             $form[$key]['zd_show'] =0;
             $res = Ziduan::where("id",$form[$key]["id"])->update($form[$key]);
         }
-        $this->restSuccess($res);
+        return $this->restSuccess($res);
     }
 }

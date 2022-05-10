@@ -34,7 +34,7 @@ class FolderController extends Controller
      *
      *
      */
-    public function add()
+    public function addS()
     {
         $form = Request::capture()->all();
         $name = isset($form['path'])?$form['path']:'';
